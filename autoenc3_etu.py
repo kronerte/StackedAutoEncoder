@@ -48,21 +48,25 @@ initializer = tf.contrib.layers.variance_scaling_initializer()
 activation = tf.nn.elu
 regularizer = tf.contrib.layers.l2_regularizer(l2_reg)
 
+
+
 #Phase 1 (building its own tf subgraph)
 
 #Input data
-X = tf.placeholder(tf.float32,shape=[None, d_inputs])
+X = tf.placeholder(tf.float32,shape=[None, d_inputs]) # input x^(i)
 
 #Hidden layer1 (first code generating layer)
-weights1_init = initializer([d_inputs, d_hidden1])
+weights1_init = initializer([d_inputs, d_hidden1]) # 784 * 300
 weights1 = tf.Variable(weights1_init, dtype=tf.float32, name="weights1")
 biases1 = tf.Variable(tf.zeros(d_hidden1), name="biases1")
-layer1 = activation(tf.matmul(X, weights1) + biases1)
+layer1 = activation(tf.matmul(X, weights1) + biases1) # z^(i,1)
+
+
 #Output layer (input reconstruction)
-weights4 = tf.transpose(weights1,name="weights4")
+weights4 = tf.transpose(weights1,name="weights4") # 300 * 784
 biases4 = tf.Variable(tf.zeros(d_outputs),name="biases4")
-layer4 = activation(tf.matmul(layer1,weights4) + biases4)
-#MISSING CODE
+layer4 = activation(tf.matmul(layer1,weights4) + biases4) # Reconstruction of x^(i)
+ 
 
 #Objective function: MSE + L2 penalty
 reconstruction_loss_phase1 = tf.reduce_mean(tf.square(layer4 - X)) #MISSING CODE
@@ -73,23 +77,27 @@ optimizer_phase1 = tf.train.AdamOptimizer(learning_rate)
 training_op_phase1 = optimizer_phase1.minimize(J_phase1)
 
 
+
+
+
 ##Phase 2 (also building its own tf subgraph)
-#
+
 ##Input data (intermediate representation)
 
-Z = tf.placeholder(tf.float32,shape=[None, d_hidden1])
-#
+Z = tf.placeholder(tf.float32,shape=[None, d_hidden1]) # z^(i,1)
+
 ##Hidden layer2 (second code generating layer)
-##MISSING CODE
-weights2_init = initializer([d_hidden1, d_hidden2])
+weights2_init = initializer([d_hidden1, d_hidden2]) # 300*150
 weights2 = tf.Variable(weights2_init, dtype=tf.float32, name="weights2")
 biases2 = tf.Variable(tf.zeros(d_hidden2), name="biases2")
-layer2 = activation(tf.matmul(Z, weights2) + biases2)
+layer2 = activation(tf.matmul(Z, weights2) + biases2) # z^(i,2)
+
 ##Hidden layer3 (second intermediate representation reconstruction layer = output for this graph)
-##MISSING CODE
-weights3 = tf.transpose(weights2,name="weights3")
+weights3 = tf.transpose(weights2,name="weights3") # 150*300
 biases3 = tf.Variable(tf.zeros(d_hidden1),name="biases3")
-layer3 = activation(tf.matmul(layer2,weights3) + biases3)
+layer3 = activation(tf.matmul(layer2,weights3) + biases3) # Reconstruction of z^(i,1)
+
+
 ##Objective function: MSE + L2 penalty
 reconstruction_loss_phase2 = tf.reduce_mean(tf.square(layer3 - Z)) #MISSING CODE
 reg_loss_phase2 = regularizer(weights2)

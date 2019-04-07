@@ -87,8 +87,11 @@ with tf.Session() as sess:
     X_test =  mnist.test.next_batch(100)[0]
 
     plt.imshow(X_test[0].reshape((28,28)))
+    plt.title("X_test[0], original image")
+    
     plt.figure()
     plt.imshow(sess.run(outputs, feed_dict={X:X_test[0].reshape((1,-1))}).reshape((28,28)))
+    plt.title("Reconstruction of X_test[0], before training")
     for epoch in range(n_epochs):
         n_batches = mnist.train.num_examples // batch_size
         for iteration in range(n_batches):
@@ -99,6 +102,7 @@ with tf.Session() as sess:
         print("error in test set =" + str(sess.run(J, feed_dict={X: X_test})))
         plt.figure()
         plt.imshow(sess.run(outputs, feed_dict={X: X_test[0].reshape((1,-1))}).reshape((28,28)))
+        plt.title("Reconstruction of X_test[0], after " +str(epoch)+"epochs")
     reconstructed_test = sess.run(outputs, feed_dict={X: X_test})
 
 
