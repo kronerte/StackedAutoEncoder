@@ -121,7 +121,7 @@ outputs = activation(tf.matmul(hidden3, weights4) + biases4) #MISSING CODE
 #####################################################
 #
 ##Adding a final layer (softmax) for supervised training on top of coding layers
-weights3_init_stack = initializer([d_hidden2, n_class])
+weights3_init_stack = initializer([d_hidden2, n_class]) # 150*10
 weights3_stack = tf.Variable(weights3_init_stack, dtype=tf.float32, name="weights3_mlp")
 biases3_stack = tf.Variable(tf.zeros(n_class), name="biases3_mlp")
 logits = tf.matmul( hidden2 , weights3_stack) + biases3_stack #MISSING CODE
@@ -168,7 +168,7 @@ with tf.Session() as sess:
             sys.stdout.flush()
             Z_batch = Z_train[iteration*batch_size:(iteration+1)*batch_size] #MISSING CODE
             sess.run(training_op_phase2, feed_dict={Z: Z_batch})
-    X_reconstruct = sess.run(outputs, feed_dict={X: X_test})
+    X_reconstruct = sess.run(outputs, feed_dict={X: X_test}) # Xtilde(i)
 
 #    #Supervised learning
     n_epochs = 20
